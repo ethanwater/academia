@@ -1,12 +1,16 @@
 package binarytree
 
 type TreeNode struct {
-	Val   int
+	Val   interface{}
 	Left  *TreeNode
 	Right *TreeNode
 }
 
-func (node *TreeNode) MinimumDepth() int32 {
+func (node *TreeNode) IsLeaf() bool {
+	return node.Left == nil && node.Right == nil
+}
+
+func (node *TreeNode) MinimumDepth() int {
 	switch {
 	case node == nil:
 		return 0
@@ -24,12 +28,33 @@ func (node *TreeNode) MinimumDepth() int32 {
 	if node.Left == nil || node.Right == nil {
 		return 1 + max(leftDepth, rightDepth)
 	}
+	//if left > 0 || right > 0 {
+	//return 1 + max(left, right)
+	//}
 
 	//return the minimum depth between left and right branches of the node
 	return 1 + min(leftDepth, rightDepth)
 }
 
-func (node *TreeNode) NodeDepthInt(target int) int {
+func (node *TreeNode) MaximumDepth() int {
+	switch {
+	case node == nil:
+		return 0
+	case node.IsLeaf():
+		return 1
+	}
+
+	left := node.Left.MaximumDepth()
+	right := node.Right.MaximumDepth()
+
+	if node.Left == nil || node.Right == nil {
+		return 1 + max(left, right)
+	}
+
+	return 1 + max(left, right)
+}
+
+func (node *TreeNode) NodeDepth(target interface{}) int {
 	switch {
 	case node == nil:
 		return 0
@@ -41,12 +66,12 @@ func (node *TreeNode) NodeDepthInt(target int) int {
 		break
 	}
 
-	leftNode := node.Left.NodeDepthInt(target)
+	leftNode := node.Left.NodeDepth(target)
 	if leftNode > 0 {
 		return 1 + leftNode
 	}
 
-	rightNode := node.Right.NodeDepthInt(target)
+	rightNode := node.Right.NodeDepth(target)
 	if rightNode > 0 {
 		return 1 + rightNode
 	}
@@ -54,7 +79,76 @@ func (node *TreeNode) NodeDepthInt(target int) int {
 	return 0 //if no matching node is detected
 }
 
-// leaf node: a node with no children
-func (node *TreeNode) IsLeaf() bool {
-	return node.Left == nil && node.Right == nil
+func (node *TreeNode) DepthFirstSearch() []interface{} {
+	if node == nil {
+		return nil
+	}
+	var stack []interface{}
+
+	rightNode := node.Right.DepthFirstSearch()
+	leftNode := node.Left.DepthFirstSearch()
+
+	stack = append(stack, node.Val)
+	if leftNode != nil {
+		stack = append(stack, leftNode...)
+	}
+	if rightNode != nil {
+		stack = append(stack, rightNode...)
+	}
+
+	return stack
+}
+
+func (node *TreeNode) IsSymmetric() bool {
+	if node == nil {
+		return true
+	}
+
+	return isReflection(node.Left, node.Right)
+}
+
+func (node *TreeNode) IsBalanced() bool {
+	if node == nil {
+		return true
+	}
+
+	var heightCalc func(*TreeNode) int
+	heightCalc = func(node *TreeNode) int {
+		if node == nil {
+			return 0
+		}
+
+		left := heightCalc(node.Left)
+		right := heightCalc(node.Right)
+
+		if left == -1 || right == -1 || max(left, right)-min(left, right) > 1 {
+			return -1
+		}
+
+		return 1 + max(left, right)
+	}
+
+	return heightCalc(node) != -1
+}
+
+func isReflection(x *TreeNode, y *TreeNode) bool {
+	if x == nil && y == nil {
+		return true
+	}
+	if x == nil || y == nil {
+		return false
+	}
+
+	return x.Val == y.Val && isReflection(x.Left, y.Right) && isReflection(x.Right, y.Left)
+}
+
+func IsIdentical(x *TreeNode, y *TreeNode) bool {
+	if x == nil && y == nil {
+		return true
+	}
+	if x == nil || y == nil {
+		return false
+	}
+
+	return x.Val == y.Val && IsIdentical(x.Left, y.Left) && IsIdentical(x.Right, y.Right)
 }
