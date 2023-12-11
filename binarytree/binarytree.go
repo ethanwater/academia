@@ -152,3 +152,122 @@ func IsIdentical(x *TreeNode, y *TreeNode) bool {
 
 	return x.Val == y.Val && IsIdentical(x.Left, y.Left) && IsIdentical(x.Right, y.Right)
 }
+
+func (node *TreeNode) FindAllPaths() [][]interface{} {
+	var paths [][]interface{}
+	var currentPath []interface{}
+
+	var dfs func(node *TreeNode)
+	dfs = func(node *TreeNode) {
+		if node == nil {
+			return
+		}
+
+		currentPath = append(currentPath, node.Val)
+
+		if node.IsLeaf() {
+			path := make([]interface{}, len(currentPath))
+			copy(path, currentPath)
+			paths = append(paths, path)
+		} else {
+			dfs(node.Left)
+			dfs(node.Right)
+		}
+
+		currentPath = currentPath[:len(currentPath)-1] // Backtrack
+	}
+
+	dfs(node)
+	return paths
+}
+
+func (node *TreeNode) Mode() []int {
+	if node == nil {
+		return nil
+	}
+	var (
+		mode     int
+		parent   interface{}
+		count    int
+		modes    []int
+		traverse func(*TreeNode)
+		contains func([]int, int) bool
+	)
+
+	contains = func(container []int, value int) bool {
+		for _, v := range container {
+			if v == value {
+				return true
+			}
+		}
+		return false
+	}
+
+	traverse = func(node *TreeNode) {
+		if node == nil {
+			return
+		}
+
+		traverse(node.Left)
+		if node.Val == parent {
+			count++
+		} else {
+			count = 1
+			parent = node.Val
+		}
+
+		if count > mode {
+			mode = count
+			modes = make([]int, mode)
+		}
+		if count == mode && !contains(modes, mode) {
+			modes = append(modes, mode)
+		}
+		traverse(node.Right)
+	}
+
+	traverse(node)
+	return modes
+}
+
+func (node *TreeNode) InorderTraversal() {
+	if node == nil {
+		return
+	}
+
+	stack := []*TreeNode{}
+	currentNode := node
+
+	for currentNode != nil || len(stack) > 0 {
+		if currentNode != nil {
+			stack = append(stack, currentNode)
+		}
+
+		currentNode = stack[len(stack)-1]
+		stack = stack[:len(stack)-1]
+
+		currentNode = currentNode.Right
+	}
+}
+
+func (node *TreeNode) InorderTraversal2() []*TreeNode {
+	if node == nil {
+		return nil
+	}
+
+	var stack []*TreeNode
+	stack = append(stack, node.Left.InorderTraversal2()...)
+	stack = append(stack, node)
+	stack = append(stack, node.Right.InorderTraversal2()...)
+	return stack
+}
+
+//func (root *TreeNode) HasPathSum(target int) {
+//	  if root == nil {
+//        return false
+//    }
+//    if root.IsLeaf {
+//        return targetSum == root.Val
+//    }
+//    return hasPathSum(root.Left, targetSum - root.Val) || hasPathSum(root.Right, targetSum - root.Val)
+//}
