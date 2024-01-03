@@ -288,12 +288,3 @@ func (node *TreeNode) SimilarLeaves(node2 *TreeNode) bool {
   return reflect.DeepEqual(leaves1, leaves2)
 }
 
-//func (root *TreeNode) HasPathSum(target int) {
-//	  if root == nil {
-//        return false
-//    }
-//    if root.IsLeaf {
-//        return targetSum == root.Val
-//    }
-//    return hasPathSum(root.Left, targetSum - root.Val) || hasPathSum(root.Right, targetSum - root.Val)
-//}
