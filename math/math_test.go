@@ -16,5 +16,12 @@ func TestFastPow(t *testing.T) {
 	if pow != 4.000 {
 		t.Errorf("result=%v", pow)
 	}
+}
 
+func TestMooresVoting(t *testing.T) {
+	input := []int{1, 1, 1, 3, 2, 2, 4, 2, 2}
+
+	if MooresVoting(input) != 2 {
+		t.Errorf("failed")
+	}
 }
