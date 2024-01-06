@@ -20,8 +20,9 @@ func TestFastPow(t *testing.T) {
 
 func TestMooresVoting(t *testing.T) {
 	input := []int{1, 1, 1, 3, 2, 2, 4, 2, 2}
+	expected, resp := 2, MooresVoting(input)
 
-	if MooresVoting(input) != 2 {
+	if expected != resp {
 		t.Errorf("failed")
 	}
 }
