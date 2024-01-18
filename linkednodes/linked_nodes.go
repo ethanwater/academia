@@ -55,7 +55,15 @@ func (node *LinkedNode) Merge(node2 *LinkedNode) *LinkedNode {
 	return sentinel_node
 }
 
-func (node *LinkedNode) InplaceMerge(node2 *LinkedNode) {
-
-}
+//func (node *LinkedNode) InplaceMerge(node2 *LinkedNode) {
+//	if node == nil || node2 == nil {
+//		return
+//	}
+//	
+//	for node!=nil && node2!=nil{
+//		switch{
+//
+//		}
+//	}
+//}
 
